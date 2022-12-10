@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'; 
 import './App.css';
+import './css/main.css';
 import Todo from './components/Todo';
 import { List } from '@mui/material';
 import AddTodo from './components/AddTodo';
@@ -7,26 +8,23 @@ import AddTodo from './components/AddTodo';
 const App = () => {
 
   const [itemList, setItemList] = useState([
-    {
-        id: 1,
-        title: '점심메뉴 고르기',
-        done: true
-    },
-    {
-        id: 2,
-        title: '책 읽기',
-        done: false
-    }
-    ,
-    {
-        id: 3,
-        title: '동영상 강의 보기',
-        done: false
-    }
+    // {
+    //     id: 1,
+    //     title: '점심메뉴 고르기',
+    //     done: true
+    // },
+    // {
+    //     id: 2,
+    //     title: '책 읽기',
+    //     done: false
+    // },
+    // {
+    //     id: 3,
+    //     title: '동영상 강의 보기',
+    //     done: false
+    // }
   ]);
 
-
-  const todoItems = itemList.map(item => <Todo key={item.id} item={item} />);
 
   // AddTodo에게 전달할 함수
   // 할 일 추가 처리 함수
@@ -42,6 +40,23 @@ const App = () => {
   };
 
 
+  // Todo에게 보낼 삭제 함수
+  // target은 내가 삭제할 객체, item은 배열에 저장된 객체
+  const remove = target => {
+    console.log(target);
+    
+    const filteredItemList = itemList.filter(item => {
+      return target.id !== item.id;
+    });
+
+    setItemList(filteredItemList);
+
+  };
+
+
+  const todoItems = itemList.map(item => <Todo key={item.id} item={item} remove={remove} />);
+
+
   useEffect(() => {
       // console.log('재 렌더링!!');
       // console.log(itemList);
@@ -49,13 +64,14 @@ const App = () => {
 
 
   return (
-    <div className="App">
+    <div className="wrapper">
       <AddTodo add={add} />
       <List>
           {todoItems}
       </List>
     </div>
   );
+
 };
 
 export default App;
