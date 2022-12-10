@@ -26,13 +26,14 @@ function AddTodo({ add }) {
     };
 
 
+
     return (
         <Paper style={{ margin: 16, padding: 16 }}>
             <Grid container>
-                <Grid xs={11} md={11} item style={{paddingRight: 16}}>
+                <Grid xs={10} md={11} item style={{paddingRight: 16}}>
                     <TextField placeholder="Add Todo Here" fullWidth onChange={changeHendler} onKeyUp={enterHendler} value={item.title} />
                 </Grid>
-                <Grid xs={1} md={1} item>
+                <Grid xs={2} md={1} item>
                     <Button fullWidth color="secondary" variant="outlined" onClick={addClickHandler} >
                         +
                     </Button>
