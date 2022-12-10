@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
+import './App.css';
+import Todo from './components/Todo';
+import { List } from '@mui/material';
+
+//화면에 렌더링할 할일데이터
+const items = [
+  {
+      id: 1,
+      title: 'hello world1',
+      done: true
+  },
+  {
+      id: 2,
+      title: 'hello world2',
+      done: false
+  },
+  {
+      id: 3,
+      title: '동영상 강의 보기',
+      done: false
+  }
+];
+
+// const todoItems = items.map((item) => {
+//   return <Todo item={item} />
+// });
+
+const todoItems = items.map(item => <Todo key={item.id} item={item} />);
+
+const App = () => {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <List>
+        {todoItems}
+      </List>
     </div>
   );
-}
+};
 
 export default App;
