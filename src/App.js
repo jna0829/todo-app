@@ -4,9 +4,20 @@ import Todo from './components/Todo';
 import { List, Paper, Container } from '@mui/material';
 import AddTodo from './components/AddTodo';
 
-export const BASE_URL = 'http://localhost:8181/api/todos';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Spinner } from 'reactstrap';
+
+
+import { API_BASE_URL } from './config/host-config';
+export const BASE_URL = API_BASE_URL + '/api/todos';
 
 const App = () => {
+
+  //토큰 가져오기
+  const ACCESS_TOKEN = localStorage.getItem('ACCESS_TOKEN');
+
+  //로딩중 상태
+  const [Loading, setLoding] =useState(true);
 
   const [itemList, setItemList] = useState([
     // {
@@ -34,7 +45,10 @@ const App = () => {
     
       fetch(BASE_URL, {
           method: 'POST',
-          headers: { 'Content-type': 'application/json' },
+          headers: { 
+            'Content-type': 'application/json',
+            'Authorization': 'Bearer ' + ACCESS_TOKEN
+           },
           body: JSON.stringify(item)
       })
       .then(res => res.json())
@@ -50,7 +64,8 @@ const App = () => {
       // console.log(target);
 
       fetch(BASE_URL + `/${target.id}`, {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: {'Authorization': 'Bearer ' + ACCESS_TOKEN}
       })
       .then(res => res.json())
       .then(json => {
@@ -63,37 +78,75 @@ const App = () => {
     console.log('2:',item);
     fetch(BASE_URL, {
         method: 'PUT',
-        headers: { 'Content-type': 'application/json' },
+        headers: { 
+          'Content-type': 'application/json',
+          'Authorization': 'Bearer ' + ACCESS_TOKEN },
         body: JSON.stringify(item)
     })
     ;
 };
   
+  // 할일 목록 불러오는 함수
   const todoItems = itemList.map(item => 
   <Todo key={item.id} item={item} remove={remove} update={update} />);
 
   useEffect(() => {
-      
-     fetch(BASE_URL)
-      .then(res => res.json())
+    
+    // 할일 목록 불러오기
+     fetch(BASE_URL,{
+        method: 'GET',
+        headers: {
+          // Bearer뒤에 꼭 띄어쓰기 필수!!!!
+          'Authorization': 'Bearer ' + ACCESS_TOKEN
+        }
+     })
+      .then(res => {
+        if (res.status === 403){
+          setTimeout(() => {
+            alert('로그인이 필요한 서비스입니다.');
+            window.location.href='/login';
+          }, 500) // 로딩 뜬다음 0.5초 alert창이 늦게뜸
+          return;
+        } else {
+          return res.json();
+        }
+      })
       .then(json => {
           // console.log(json.todos);
           setItemList(json.todos);
+          //로딩 끝
+          setLoding(false);
       });
 
-  }, []);
+  }, [ACCESS_TOKEN]);
 
+  //로딩 중일 떄 보여줄 화면
+  const loadingPage = (
+    <div style={{
+      width: 'fit-content',
+      margin: '0 auto'
+    }}>
+    <Spinner color="secondary">
+      Loading...
+    </Spinner>
+    </div>
+  );
+
+  // 로딩이 끝났을 때 보여줄 화면
+  const viewPage = (
+    <Container maxWidth="md" style={{marginTop: 100}}>
+      <AddTodo add={add} />
+      <Paper style={{margin: 16}}>
+        <List>
+            {todoItems}
+        </List>
+      </Paper>
+    </Container>
+  );
 
   return (
-    <div className="wrapper">
-      <Container maxWidth="md">
-        <AddTodo add={add} />
-        <Paper style={{margin: 16}}>
-          <List>
-              {todoItems}
-          </List>
-        </Paper>
-      </Container>
+    <div className="wrapper" style={{marginTop: 200}} >
+        { Loading ? loadingPage : viewPage }
     </div>
   );
 };
