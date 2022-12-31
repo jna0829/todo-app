@@ -7,7 +7,9 @@ console.log('현재호스트: ', hostname);
 
 let backendHost; //백엔드 호스트 이름
 if(hostname === 'localhost'){
+    // 서버 배포되는 곳으로 수정
     backendHost = 'http://localhost:8181'
+    
 }
 
 export const API_BASE_URL = `${backendHost}`;
