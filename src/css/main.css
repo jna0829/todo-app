@@ -4,3 +4,30 @@
     width: 50%;
     margin: 50px auto;
 }
+
+.thumbnail-box {
+    width: 100px;
+    height: 100px;
+    /* 원통형 */
+    border-radius: 50%;
+    /* 이미지는 네모인데 이미지를 원통형으로 만들었기 때문에 모서리를 가리기 위해 */
+    overflow: hidden;
+    margin: 30px auto 10px;
+    /* 마우스 올리면 클릭 모양이 뜸 */
+    cursor: pointer;
+  }
+  
+  .thumbnail-box img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .signup-img-label {
+    font-weight: bold;
+    font-size: 17px;
+    color: #0095f6;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    margin-bottom: 20px;
+  }

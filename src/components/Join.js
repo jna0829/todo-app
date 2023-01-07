@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {Button, Container, Grid, TextField, Typography, Link} from "@mui/material";
 //herder에 있는 Link와 성능은 똑같으나 라이브러리가 다르다.
 
 import { API_BASE_URL } from "../config/host-config";
 
 const Join = () => {
+
+    // 파일 input Dom객체 useRef 훅으로 관리하기
+    const $fileInput = useRef();
+
+    //이미지 파일 정보 상태관리
+    const [imgFile, setImgFile] = useState(null);
 
     //회원 입력 정보 상태관리
     const [user, setUser] = useState ({
@@ -150,9 +156,35 @@ const Join = () => {
         }
     };
 
+    // 첨부 파일 추가 클릭 기능
+    const fileClickHandler = e => {
+        // const $fileInput = document.getElementById('profileImg');
+        // $fileInput.click();
+        $fileInput.current.click();
+    };
+
+    // 이미지 썸네일 체인지 이벤트
+    const showImageHandler = e => {
+        //첨부파일의 데이터를 읽어온다
+        // const $fileInput = document.getElementById('profileImg');
+        // console.log($fileInput.files[0]);
+        console.log($fileInput.current.files[0]);
+        const fileData = $fileInput.current.files[0];
+
+        //첨부 파일의 바이트 데이터를 읽기 위한 객체
+        const reader = new FileReader();
+        //파일 바이트 데이터를 img src나 a의 href를 넣기 위한 모양으로 바꿔서 로딩해줌
+        reader.readAsDataURL(fileData);
+
+        //첨부 파일이 등록되는 순간의 이미지 셋팅
+        reader.onloadend = e => {
+            //이미지 src 등록
+            setImgFile(reader.result);
+        };
+    };
+
     
     return (
-        
         <Container component="main" maxWidth="xs" style={{ marginTop: "130px" }}>
             <form noValidate onSubmit={joinHandler}>
                 <Grid container spacing={2}>
@@ -161,10 +193,25 @@ const Join = () => {
                             계정 생성
                         </Typography>
                     </Grid>
+
+                    {/* 프로필 사진 파일 넣을 수 있는 탐색기 창이 떠야함 */}
+                    <Grid item xs={12}>
+                        <div className="thumbnail-box" onClick={fileClickHandler}>
+                            <img src={imgFile ? imgFile : require("../assets/img/image-add.png")} alt="프로필 썸네일" />
+                        </div>
+                        
+                        <label className="signup-img-label" htmlFor="profileImg">프로필 이미지 추가</label>
+
+                        {/* type="file" 파일탐색기가 뜸 -> accept는 이미지 파일만 넣을 수 있도록 -> 일단 숨김 */}
+                        {/* multiple는 사진을 여러개 넣을 수 있지만 보통은 그렇게 안함 */}
+                        <input id="profileImg" type="file" accept="image/*" style={{display : 'none'}} onChange={showImageHandler}
+                               ref={$fileInput} />
+                    </Grid>
+
                     <Grid item xs={12}>
                         <TextField
                             autoComplete="fname"
-                            name="username"
+                            name="username" 
                             variant="outlined"
                             required
                             fullWidth
