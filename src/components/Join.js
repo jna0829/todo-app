@@ -137,18 +137,31 @@ const Join = () => {
         e.preventDefault();
 
         // 회원입력정보를 모두 읽어서 서버에 요청
-
         if(isValid()) { // validate값이 모두 true일 경우
+
+            // 회원 텍스트 정보 (Json) + 프로필 사진 (이미지)
+            // 서버에 여러가지 정보를 보내야 할 때 multipart/form-data
+            const userFormData = new FormData();
+
+            // JSON 형태를 바이트 형태로 수정하기 위해서
+            const userBlob = new Blob([JSON.stringify(user)], { type: "application/json" });
+
+            //유저정보 JSON, 이미지 append (key값, 넣을 데이터)
+            // userFormData.append('userInfo', JSON.stringify(user)); //텍스트 형태
+            userFormData.append('userInfo', userBlob); //텍스트 형태 -> 바이트 형태로
+            userFormData.append('profileImg', $fileInput.current.files[0]); //바이트 형태
+
             fetch(API_BASE_URL+'/auth/signup', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(user)
+                // headers: { 'Content-Type': 'application/json' },
+                // body: JSON.stringify(user)
+                body: userFormData
             }).then(res => {
                 if (res.status === 200) {
                     alert('회원가입을 축하합니다!!');
                     window.location.href='/login';
                 } else {
-                    alert('서버에 문제가 생겼습니다. 다음에 다시 시도하세요 쏴리~');
+                    alert('서버에 문제가 생겼습니다. 다음에 다시 시도하세요~');
                 }
             })
         } else {
